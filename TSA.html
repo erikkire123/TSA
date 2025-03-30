@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TSA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* San Francisco (SF) Font - iPhone's default */
+        @font-face {
+            font-family: 'SF Pro Display';
+            src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-regular-webfont.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+        }
+        
+        :root {
+            --system-blue: #0A84FF;
+            --system-gray: #8E8E93;
+            --system-gray2: #636366;
+            --system-gray6: #F2F2F7;
+            --system-background: #000000;
+            --system-secondary-background: #1C1C1E;
+            --blur-effect: saturate(180%) blur(20px);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        body {
+            background-color: var(--system-background);
+            color: var(--system-gray6);
+            overflow-x: hidden;
+        }
+        
+        /* iOS-like navigation bar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 44px;
+            padding: 0 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(28, 28, 30, 0.8);
+            backdrop-filter: var(--blur-effect);
+            -webkit-backdrop-filter: var(--blur-effect);
+            z-index: 100;
+            border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .navbar-title {
+            font-size: 17px;
+            font-weight: 600;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        /* Logo styling */
+        .logo {
+            height: 30px;
+            margin-right: 10px;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            position: absolute;
+            left: 16px;
+        }
+        
+        /* iOS-like tab bar */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 83px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: rgba(28, 28, 30, 0.8);
+            backdrop-filter: var(--blur-effect);
+            -webkit-backdrop-filter: var(--blur-effect);
+            z-index: 100;
+            border-top: 0.5px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 0;
+            color: var(--system-gray);
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .tab i {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+        
+        .tab.active {
+            color: var(--system-blue);
+        }
+        
+        /* Content area */
+        .content {
+            padding: 60px 0 100px;
+            min-height: 100vh;
+        }
+        
+        /* iOS-like cards */
+        .card {
+            background: var(--system-secondary-background);
+            border-radius: 12px;
+            margin: 16px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-header {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: white;
+        }
+        
+        /* iOS-like buttons */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--system-blue);
+            color: white;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: 500;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background-color: #0066CC;
+            transform: scale(0.98);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--system-blue);
+            color: var(--system-blue);
+        }
+        
+        /* Hero section */
+        .hero {
+            height: 60vh;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            background: linear-gradient(135deg, #1C1C1E, #000000);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 32px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease 0.2s forwards;
+        }
+        
+        .hero .btn {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease 0.4s forwards;
+        }
+        
+        /* Floating bubbles animation */
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255, 0.1);
+            animation: float 15s infinite linear;
+        }
+        
+        /* Features section */
+        .features {
+            padding: 60px 20px;
+            background-color: var(--system-background);
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .section-header h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: white;
+        }
+        
+        .section-header p {
+            font-size: 18px;
+            color: var(--system-gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* iOS-like toggle */
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 32px;
+        }
+        
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #3A3A3C;
+            transition: .4s;
+            border-radius: 16px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 28px;
+            width: 28px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--system-blue);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+            100% {
+                transform: translateY(-1000px) rotate(720deg);
+            }
+        }
+        
+        /* Parallax effect */
+        .parallax {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .parallax::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1;
+        }
+        
+        .parallax-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+        
+        /* Evil quotes styling */
+        .evil-quote {
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-shadow: 0 1px 13px rgba(0,0,0,0.8);
+        }
+        
+        .quote-author {
+            font-size: 12px;
+            margin-bottom: 30px;
+            opacity: 0.8;
+        }
+        
+        /* iOS-like modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .modal-content {
+            background: var(--system-secondary-background);
+            width: 90%;
+            max-width: 400px;
+            border-radius: 14px;
+            overflow: hidden;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal-header {
+            padding: 16px;
+            font-size: 17px;
+            font-weight: 600;
+            text-align: center;
+            border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            border-top: 0.5px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 16px;
+            text-align: center;
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--system-blue);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .modal-btn:not(:last-child) {
+            border-right: 0.5px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .hero p {
+                font-size: 18px;
+            }
+            
+            .section-header h2 {
+                font-size: 28px;
+            }
+            
+            .evil-quote {
+                font-size: 24px;
+            }
+        }
+        
+        /* Discord button */
+        .discord-btn {
+            background-color: #5865F2;
+        }
+        
+        .discord-btn:hover {
+            background-color: #4752C4;
+        }
+        
+        /* YouTube button */
+        .youtube-btn {
+            background-color: #FF0000;
+        }
+        
+        .youtube-btn:hover {
+            background-color: #CC0000;
+        }
+    </style>
+</head>
+<body>
+    <!-- iOS-like navigation bar with logo -->
+    <div class="navbar">
+        <div class="logo-container">
+            <img src="https://cdn.discordapp.com/attachments/1355525318550749425/1355571606180860026/w8w4L7vieCX7gAAAABJRU5ErkJggg.png?ex=67eabb70&is=67e969f0&hm=2f97d32c2e6fbe94baaed7a291a015d419716bd4f9c73b61d89d5b2d6bf4f655&" alt="TSA Logo" class="logo">
+        </div>
+    </div>
+    
+    <!-- Hero section with animations -->
+    <section class="hero" id="hero">
+        <!-- Animated bubbles -->
+        <div class="bubble" style="width: 100px; height: 100px; top: 20%; left: 10%;"></div>
+        <div class="bubble" style="width: 150px; height: 150px; top: 60%; left: 70%;"></div>
+        <div class="bubble" style="width: 80px; height: 80px; top: 30%; left: 80%;"></div>
+        <div class="bubble" style="width: 120px; height: 120px; top: 70%; left: 20%;"></div>
+        
+        <h1>The Scamming Association</h1>
+        <p>Join & Master the art of scamming</p>
+        <button class="btn discord-btn" id="discordBtn">Join Our Discord</button>
+    </section>
+    
+    <!-- Features section -->
+    <section class="features">
+        <div class="section-header">
+            <h2>Why Join TSA?</h2>
+            <p>About us</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-user-secret"></i> TSA
+                </div>
+                <p>Joining and participating in our scams is simple.</p>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-line"></i> Giveaways
+                </div>
+                <p>Most of our winnings are offered to our community members via giveaways.</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Parallax section with random evil quotes -->
+    <section class="parallax" style="background-image: url('https://cdn.discordapp.com/attachments/1355525318550749425/1355576535007891680/Untitled_2.png?ex=67eac007&is=67e96e87&hm=011994288eaac03c4c88056ce1931b2b6e7222e75eddae0f779e50168ec22d49&');">
+        <div class="parallax-content">
+            <div id="evilQuoteContainer">
+                <div class="evil-quote">The world we live in is evil, so a bit more won't harm.</div>
+                <div class="quote-author">TSA</div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Socials section -->
+    <section style="padding: 60px 20px; background-color: var(--system-secondary-background);">
+        <div class="section-header">
+            <h2>Socials</h2>
+            <p>Here is where you may find us.</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fab fa-youtube"></i> YouTube
+                </div>
+                <p style="margin-bottom: 16px;">Subscribe to our YouTube channel!</p>
+                <button class="btn youtube-btn" style="margin-top: 16px; width: 100%;" id="youtubeBtn">Redirect</button>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="fab fa-discord"></i> Discord
+                </div>
+                <p style="margin-bottom: 16px;">Connect with our community.</p>
+                <button class="btn discord-btn" style="margin-top: 16px; width: 100%;" id="discordSocialBtn">Join</button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- iOS-like tab bar -->
+    <div class="tab-bar">
+        <div class="tab active" id="homeTab">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </div>
+        <div class="tab" id="discordTab">
+            <i class="fab fa-discord"></i>
+            <span>Discord</span>
+        </div>
+    </div>
+    
+    <!-- Modal for Discord redirect -->
+    <div class="modal" id="discordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                Join Our Discord
+            </div>
+            <div class="modal-body">
+                <p>You're about to be redirected to our official Discord server. Make sure to read the rules and complete verification to gain full access.</p>
+                <p style="margin-top: 16px; font-weight: 600;">Are you sure you want to proceed?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn" id="cancelDiscordBtn">Cancel</button>
+                <button class="modal-btn" style="font-weight: 600;" id="confirmDiscordBtn">Continue</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for YouTube redirect -->
+    <div class="modal" id="youtubeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                Visit Our YouTube
+            </div>
+            <div class="modal-body">
+                <p>You're about to be redirected to our YouTube channel. Make sure to subscribe for the latest content.</p>
+                <p style="margin-top: 16px; font-weight: 600;">Are you sure you want to proceed?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn" id="cancelYoutubeBtn">Cancel</button>
+                <button class="modal-btn" style="font-weight: 600;" id="confirmYoutubeBtn">Continue</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Evil quotes array
+        const evilQuotes = [
+            { text: "The world we live in is evil, so a bit more won't harm.", author: "TSA" },
+            { text: "It's not a scam if they're dumb enough to fall for it.", author: "TSA" },
+ 	    { text: "If they're dumb enough to fall for it, they deserve to lose it.", author: "TSA" },
+	    { text: "Every dollar is my money waiting to be collected.", author: "TSA" },
+            { text: "Money doesn't care who earns it, only who spends it.", author: "TSA" }
+        ];
+        
+        // Display random evil quote
+        function displayRandomQuote() {
+            const quoteContainer = document.getElementById('evilQuoteContainer');
+            const randomQuote = evilQuotes[Math.floor(Math.random() * evilQuotes.length)];
+            quoteContainer.innerHTML = `
+                <div class="evil-quote">${randomQuote.text}</div>
+                <div class="quote-author">${randomQuote.author}</div>
+            `;
+        }
+        
+        // Rotate quotes every 10 seconds
+        displayRandomQuote();
+        setInterval(displayRandomQuote, 10000);
+        
+        // Tab bar functionality
+        const tabs = document.querySelectorAll('.tab');
+        const homeTab = document.getElementById('homeTab');
+        const discordTab = document.getElementById('discordTab');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                if (tab === homeTab) {
+                    // Scroll to top when home is clicked
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                } else if (tab === discordTab) {
+                    showDiscordModal();
+                }
+            });
+        });
+        
+        // Discord redirect functionality
+        const discordBtn = document.getElementById('discordBtn');
+        const discordSocialBtn = document.getElementById('discordSocialBtn');
+        const discordModal = document.getElementById('discordModal');
+        const cancelDiscordBtn = document.getElementById('cancelDiscordBtn');
+        const confirmDiscordBtn = document.getElementById('confirmDiscordBtn');
+        
+        function showDiscordModal() {
+            discordModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function redirectToDiscord() {
+            window.location.href = 'https://discord.gg/EjxuFvpEax';
+        }
+        
+        // YouTube redirect functionality
+        const youtubeBtn = document.getElementById('youtubeBtn');
+        const youtubeModal = document.getElementById('youtubeModal');
+        const cancelYoutubeBtn = document.getElementById('cancelYoutubeBtn');
+        const confirmYoutubeBtn = document.getElementById('confirmYoutubeBtn');
+        
+        function showYoutubeModal() {
+            youtubeModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function redirectToYoutube() {
+            // Replace with your YouTube URL
+            window.location.href = 'https://youtube.com';
+        }
+        
+        // Event listeners for Discord buttons
+        discordBtn.addEventListener('click', showDiscordModal);
+        discordSocialBtn.addEventListener('click', showDiscordModal);
+        discordTab.addEventListener('click', showDiscordModal);
+        confirmDiscordBtn.addEventListener('click', redirectToDiscord);
+        cancelDiscordBtn.addEventListener('click', () => {
+            discordModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+        
+        // Event listeners for YouTube buttons
+        youtubeBtn.addEventListener('click', showYoutubeModal);
+        confirmYoutubeBtn.addEventListener('click', redirectToYoutube);
+        cancelYoutubeBtn.addEventListener('click', () => {
+            youtubeModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+        
+        // Close modals when clicking outside
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        });
+        
+        // Parallax effect
+        window.addEventListener('scroll', () => {
+            const parallax = document.querySelector('.parallax');
+            const scrollPosition = window.pageYOffset;
+            parallax.style.backgroundPositionY = scrollPosition * 0.5 + 'px';
+        });
+        
+        // Generate more bubbles
+        function createBubbles() {
+            const hero = document.getElementById('hero');
+            for (let i = 0; i < 8; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                const size = Math.random() * 100 + 50;
+                bubble.style.width = size + 'px';
+                bubble.style.height = size + 'px';
+                bubble.style.top = Math.random() * 100 + '%';
+                bubble.style.left = Math.random() * 100 + '%';
+                bubble.style.animationDuration = (Math.random() * 20 + 10) + 's';
+                bubble.style.animationDelay = (Math.random() * 5) + 's';
+                hero.appendChild(bubble);
+            }
+        }
+        
+        createBubbles();
+        
+        // Card hover effects
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                card.style.transform = `perspective(1000px) rotateX(${(y - rect.height/2) / 20}deg) rotateY(${(x - rect.width/2) / -20}deg)`;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>
